@@ -1,19 +1,17 @@
 'use strict'
 
 const {v4} = require('uuid');
-const AWS = require('aws-sdk');
-const { response } = require('express');
+const AWS = require('aws-sdk')
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const tableName = 'todos'
-module.exports.createTodo = async (event) => {
+module.exports.createTodo = async (event, context, callback) => {
     const datetime = new Date().toISOString();
-    const data = JSON.parse(event.body);
+    const data2 = JSON.parse(event.body);
     const params = {
         TableName: 'todos',
         Item: {
             id: v4(),
-            task: data.task,
+            task: data2.task,
             done: false,
             createdAt: datetime,
             updatedAt: datetime
@@ -22,16 +20,19 @@ module.exports.createTodo = async (event) => {
     dynamoDb.put(params, (error, data) => {
         if(error) {
             console.error(error);
-            throw error;
-        }else{
-            const response = {
-                statusCode: 201,
-                body: JSON.stringify(params)
-            };
-            console.log('response is ', response)
-            return response;
-        } 
-    });
-   
-    
+            return error;
+        }
+        const response = {
+            statusCode: 200,
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Credentials': true,
+            },
+            body: JSON.stringify(params.Item)
+        }
+        
+        console.log('data is ',params.Item);
+        console.log('respose is ',response);
+    });   
+    callback(null, "success");
 }

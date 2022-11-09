@@ -23,6 +23,5 @@ module.exports.getTodo = (event, context, callback) => {
         };
 
         callback(null, response);
-        return;
     });
 }

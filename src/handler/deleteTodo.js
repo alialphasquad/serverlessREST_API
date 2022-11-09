@@ -23,6 +23,5 @@ module.exports.deleteTodo = (event, context, callback) => {
         };
 
         callback(null, response);
-        return;
     });
 }
